@@ -30,7 +30,9 @@ class SerieController extends AbstractController
     #[Route('/serie/list', name: 'app_serie_list')]
     public function index(SerieRepository $serieRepository): Response
     {
-        $series = $serieRepository->findAll();
+        //$series = $serieRepository->findAll();
+
+        $series = $serieRepository->findBySeveralCriterias();
 
         return $this->render('serie/index.html.twig', [
             'series' => $series

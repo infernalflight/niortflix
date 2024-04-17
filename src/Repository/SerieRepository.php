@@ -21,6 +21,25 @@ class SerieRepository extends ServiceEntityRepository
         parent::__construct($registry, Serie::class);
     }
 
+    public function findBySeveralCriterias(): array
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.genres = :genre1')
+            ->setParameter(':genre1', 'SF')
+            ->orWhere('s.genres = :genre2')
+            ->setParameter(':genre2', 'Comedy')
+            ->orderBy('s.firstAirDate', 'DESC')
+            ->getQuery()
+            ->getResult()
+        ;
+
+
+
+
+    }
+
+
+
     //    /**
     //     * @return Serie[] Returns an array of Serie objects
     //     */
