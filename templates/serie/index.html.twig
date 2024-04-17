@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} :: Series{% endblock %}
+
+{% block body %}
+    <h2>Listes de series</h2>
+    <ul>
+        {% for serie in series %}
+            <li><a href="{{ path('app_serie_details', {'id' : serie.id}) }}"><strong>{{ serie.name }}</strong></a>: {{ serie.overview }} - {{ serie.firstAirDate|date('d/m/Y') }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
