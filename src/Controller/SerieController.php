@@ -14,11 +14,10 @@ class SerieController extends AbstractController
     #[Route('/serie/create', name: 'app_serie_create')]
     public function create(EntityManagerInterface $em): Response
     {
-
         $serie = new Serie();
         $serie->setName('The Witcher');
         $serie->setOverview("Ciri & Geralt vivent de formidables aventures...");
-        $serie->setFirstAirDate(new \DateTime('2019-04-14'));
+        $serie->setFirstAirDate(new \DateTime('2015-04-14'));
         $serie->setStatus('Returning');
         $serie->setDateCreated(new \DateTime());
 
