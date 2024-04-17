@@ -37,6 +37,17 @@ class SerieController extends AbstractController
         ]);
     }
 
+    #[Route('/serie/by_status/{status}', name: 'app_serie_list_by_status', requirements: ['status' => 'Returning|Canceled|Ended'])]
+    public function listByStatus(SerieRepository $serieRepository, string $status): Response
+    {
+        $series = $serieRepository->findBy(['status' => $status], ['firstAirDate' => 'DESC']);
+
+        return $this->render('serie/index.html.twig', [
+            'series' => $series
+        ]);
+    }
+
+
     #[Route('/serie/details/{id}', name: 'app_serie_details', requirements: ['id' => '\d+'])]
     public function details(int $id, SerieRepository $serieRepository): Response
     {

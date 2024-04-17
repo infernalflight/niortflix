@@ -5,9 +5,17 @@
 {% block body %}
     <h2>Listes de series</h2>
     <ul>
+        <li><a href="{{ path('app_serie_list') }}">Tout</a></li>
+        <li><a href="{{ path('app_serie_list_by_status', {'status' : 'Returning'}) }}">En cours</a></li>
+        <li><a href="{{ path('app_serie_list_by_status', {'status' : 'Ended'}) }}">Terminées</a></li>
+        <li><a href="{{ path('app_serie_list_by_status', {'status' : 'Canceled'}) }}">Abandonnées</a></li>
+    </ul>
+    <br><br><br>
+    <ul>
         {% for serie in series %}
             <li>
                 <span class="badge text-bg-primary rounded-pill">{{ serie.status }}</span>
+                <span class="badge text-bg-dark rounded-pill">{{ serie.genres }}</span>
                 <a href="{{ path('app_serie_details', {'id' : serie.id}) }}">
                     <strong>{{ serie.name|upper }}</strong>
                 </a>: {{ serie.overview|capitalize }} -
