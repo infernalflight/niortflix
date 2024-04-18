@@ -3,6 +3,13 @@
 {% block title %}{{ parent() }} :: Detail{% endblock %}
 
 {% block body %}
+    <style>
+        body {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.9)),
+            url("{{ asset("backdrops/" ~ serie.backdrop) }}");
+        }
+    </style>
+
     <h2>Detail de la série {{ serie.id }}</h2>
     <dl>
         <dt>Nom de la série:</dt>
