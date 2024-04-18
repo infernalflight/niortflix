@@ -10,10 +10,36 @@
         <li><a href="{{ path('app_serie_list_by_status', {'status' : 'Ended'}) }}">Terminées</a></li>
         <li><a href="{{ path('app_serie_list_by_status', {'status' : 'Canceled'}) }}">Abandonnées</a></li>
     </ul>
-    <br><br><br>
+    <br><br>
+    <section>
+        {# 2 méthodes du Controller Serie utilisent le même template => problème pour rensigner la route en "dur pour la pagination #}
+        {# Dans la fonction path(), on met une variable twig qui renseigne la route en cours + les paramètres en cours auxquels on ajoute le paramètre de page  #}
+
+        {% if page > 1 %}
+            <a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'page' : page -1 })) }}"><<</a>&nbsp;
+        {% endif %}
+        page {{ page }}
+        {% if page < max_pages %}
+            <a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({'page' : page +1 })) }}">>></a>
+        {% endif %}
+    </section>
+    <br><br>
     <section>
         {% for serie in series %}
             <a href="{{ path('app_serie_details', {'id': serie.id}) }}"><img src="{{ asset('posters/series/' ~ serie.poster) }}" width="300px" loading="lazy" /></a>
+        {% else %}
+            Pas de série
         {% endfor %}
     </section>
 {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
