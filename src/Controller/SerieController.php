@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Serie;
+use App\Form\SerieType;
 use App\Repository\SerieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -10,25 +11,20 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[Route('/serie', name: 'app_serie')]
 class SerieController extends AbstractController
 {
-    #[Route('/serie/create', name: 'app_serie_create')]
-    public function create(EntityManagerInterface $em): Response
+    #[Route('/create', name: '_create')]
+    public function create(): Response
     {
-        $serie = new Serie();
-        $serie->setName('The Witcher');
-        $serie->setOverview("Ciri & Geralt vivent de formidables aventures...");
-        $serie->setFirstAirDate(new \DateTime('2015-04-14'));
-        $serie->setStatus('Returning');
-        $serie->setDateCreated(new \DateTime());
+        $form = $this->createForm(SerieType::class);
 
-        $em->persist($serie);
-        $em->flush();
-
-        return new Response('Une serie a été crée');
+        return $this->render('serie/edit.html.twig', [
+            'serie_form' => $form,
+        ]);
     }
 
-    #[Route('/serie/list/{page}', name: 'app_serie_list', requirements: ['page' => '\d+'], defaults: ['page' => 1])]
+    #[Route('/list/{page}', name: '_list', requirements: ['page' => '\d+'], defaults: ['page' => 1])]
     public function index(SerieRepository $serieRepository, int $page): Response
     {
         if ($page < 1) {
@@ -62,7 +58,7 @@ class SerieController extends AbstractController
         ]);
     }
 
-    #[Route('/serie/by_status/{status}/{page}', name: 'app_serie_list_by_status', requirements: ['status' => 'Returning|Canceled|Ended', 'page' => '\d+'], defaults: ['page' => 1])]
+    #[Route('/by_status/{status}/{page}', name: '_list_by_status', requirements: ['status' => 'Returning|Canceled|Ended', 'page' => '\d+'], defaults: ['page' => 1])]
     public function listByStatus(SerieRepository $serieRepository, string $status, int $page): Response
     {
         $offset = ($page - 1) * 18;
@@ -79,7 +75,7 @@ class SerieController extends AbstractController
         ]);
     }
 
-    #[Route('/serie/details/{id}', name: 'app_serie_details', requirements: ['id' => '\d+'])]
+    #[Route('/details/{id}', name: '_details', requirements: ['id' => '\d+'])]
     public function details(int $id, SerieRepository $serieRepository): Response
     {
         $serie = $serieRepository->find($id);
