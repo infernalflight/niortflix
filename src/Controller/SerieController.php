@@ -30,9 +30,19 @@ class SerieController extends AbstractController
     #[Route('/serie/list', name: 'app_serie_list')]
     public function index(SerieRepository $serieRepository): Response
     {
+
+        // Grosse maille : la méthode héritée
         //$series = $serieRepository->findAll();
 
-        $series = $serieRepository->findBySeveralCriterias();
+        // Plus fin : le queryBuilder
+        $series = $serieRepository->findBySeveralCriterias('SF', 'Comedy', (new \DateTime('-3 year'))->format('Y-m-d'));
+
+        // Encore plus fin : avec DQL
+        //$series = $serieRepository->findWithDql();
+
+        // Le Fin du Fin : avec SQL Brut
+        //$series = $serieRepository->findWithSql();
+
 
         return $this->render('serie/index.html.twig', [
             'series' => $series
