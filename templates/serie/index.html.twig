@@ -11,16 +11,9 @@
         <li><a href="{{ path('app_serie_list_by_status', {'status' : 'Canceled'}) }}">Abandonnées</a></li>
     </ul>
     <br><br><br>
-    <ul>
+    <section>
         {% for serie in series %}
-            <li>
-                <span class="badge text-bg-primary rounded-pill">{{ serie.status }}</span>
-                <span class="badge text-bg-dark rounded-pill">{{ serie.genres }}</span>
-                <a href="{{ path('app_serie_details', {'id' : serie.id}) }}">
-                    <strong>{{ serie.name|upper }}</strong>
-                </a>: {{ serie.overview|capitalize }} -
-                <span class="badge text-bg-secondary rounded-pill">{{ serie.firstAirDate|date('d/m/Y') }}</span>
-            </li>
+            <a href="{{ path('app_serie_details', {'id': serie.id}) }}"><img src="{{ asset('posters/series/' ~ serie.poster) }}" width="300px" loading="lazy" /></a>
         {% endfor %}
-    </ul>
+    </section>
 {% endblock %}

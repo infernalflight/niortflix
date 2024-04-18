@@ -32,10 +32,10 @@ class SerieController extends AbstractController
     {
 
         // Grosse maille : la méthode héritée
-        //$series = $serieRepository->findAll();
+        $series = $serieRepository->findAll();
 
         // Plus fin : le queryBuilder
-        $series = $serieRepository->findBySeveralCriterias('SF', 'Comedy', (new \DateTime('-3 year'))->format('Y-m-d'));
+        //$series = $serieRepository->findBySeveralCriterias('SF', 'Comedy', (new \DateTime('-3 year'))->format('Y-m-d'));
 
         // Encore plus fin : avec DQL
         //$series = $serieRepository->findWithDql();
