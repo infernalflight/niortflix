@@ -21,6 +21,7 @@ class SerieType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Nom',
+                'required' => false,
             ])
             ->add('overview', TextareaType::class, [
                 'attr' => [

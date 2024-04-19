@@ -21,4 +21,7 @@
         <dt>Date de lancement:</dt>
         <dd>{{ serie.firstAirDate|date('d/m/Y') }}</dd>
     </dl>
+    <br>
+    <a href="{{ path('app_serie_update', {'id' : serie.id}) }}" class="btn btn-primary">Editer</a>
+
 {% endblock %}
