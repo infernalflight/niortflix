@@ -4,13 +4,18 @@ namespace App\Form;
 
 use App\Entity\Serie;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 
 class SerieType extends AbstractType
 {
@@ -45,8 +50,34 @@ class SerieType extends AbstractType
             ->add('lastAirDate', null, [
                 'widget' => 'single_text',
             ])
-            ->add('backdrop')
-            ->add('poster')
+            ->add('poster_file', FileType::class, [
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '1024k',
+                        'maxSizeMessage' => 'Ton image est trop volumineuse..',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/jpg',
+                            'image/png',
+                            'image/gif',
+                        ],
+                        'mimeTypesMessage' => 'Ce format est pas ok',
+                    ]),
+                ]
+            ])
+            ->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $formEvent) {
+                $serie = $formEvent->getData();
+                if ($serie && $serie->getPoster()) {
+                    $form = $formEvent->getForm();
+                    $form->add('delete_image', CheckboxType::class, [
+                        'mapped' => false,
+                        'required' => false,
+                        'label' => 'Supprimer l\'image',
+                    ]);
+                }
+            })
             ->add('submit', SubmitType::class, [
                 'label' => 'Enregistrer',
                 'attr' => [

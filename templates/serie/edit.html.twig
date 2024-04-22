@@ -7,6 +7,9 @@
     <div class="row justify-content-center">
         <div class="col-12 col-xl-6">
             {{ form(serie_form) }}
+            {% if serie is defined %}
+                <img src="{{ asset('posters/series/' ~ serie.poster) }}">
+            {% endif %}
         </div>
     </div>
 {% endblock %}

@@ -7,22 +7,30 @@ use App\Form\SerieType;
 use App\Repository\SerieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/serie', name: 'app_serie')]
 class SerieController extends AbstractController
 {
     #[Route('/create', name: '_create')]
-    public function create(Request $request, EntityManagerInterface $em): Response
+    public function create(Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
         $serie = new Serie();
         $form = $this->createForm(SerieType::class, $serie);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($form->get('poster_file')->getData() instanceof UploadedFile) {
+                $posterFile = $form->get('poster_file')->getData();
+                $name = strtolower($slugger->slug($serie->getName() . '-' . uniqid())) . '.' . $posterFile->guessExtension();
+                $posterFile->move('posters/series', $name);
+                $serie->setPoster($name);
+            }
 
             $em->persist($serie);
             $em->flush();
@@ -38,12 +46,27 @@ class SerieController extends AbstractController
     }
 
     #[Route('/update/{id}', name: '_update', requirements: ['id' => '\d+'])]
-    public function update(Request $request, EntityManagerInterface $em, Serie $serie): Response
+    public function update(Request $request, EntityManagerInterface $em, Serie $serie, SluggerInterface $slugger): Response
     {
         $form = $this->createForm(SerieType::class, $serie);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($form->has('delete_image') && $form->get('delete_image')->getData()) {
+                unlink('posters/series/' . $serie->getPoster());
+            }
+
+            if ($form->get('poster_file')->getData() instanceof UploadedFile) {
+                $posterFile = $form->get('poster_file')->getData();
+                $name = strtolower($slugger->slug($serie->getName() . '-' . uniqid())) . '.' . $posterFile->guessExtension();
+                $posterFile->move('posters/series', $name);
+
+                if ($serie->getPoster() && file_exists('posters/series/' . $serie->getPoster())) {
+                    unlink('posters/series/' . $serie->getPoster());
+                }
+
+                $serie->setPoster($name);
+            }
 
             $em->persist($serie);
             $em->flush();
@@ -55,6 +78,7 @@ class SerieController extends AbstractController
 
         return $this->render('serie/edit.html.twig', [
             'serie_form' => $form,
+            'serie' => $serie,
         ]);
     }
 
