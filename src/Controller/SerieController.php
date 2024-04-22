@@ -38,10 +38,8 @@ class SerieController extends AbstractController
     }
 
     #[Route('/update/{id}', name: '_update', requirements: ['id' => '\d+'])]
-    public function update(Request $request, EntityManagerInterface $em, SerieRepository $serieRepository, int $id): Response
+    public function update(Request $request, EntityManagerInterface $em, Serie $serie): Response
     {
-        $serie = $serieRepository->find($id);
-
         $form = $this->createForm(SerieType::class, $serie);
         $form->handleRequest($request);
 
@@ -52,7 +50,7 @@ class SerieController extends AbstractController
 
             $this->addFlash('success', 'Une série a été modifiée.');
 
-            return $this->redirectToRoute('app_serie_details', ['id' => $id]);
+            return $this->redirectToRoute('app_serie_details', ['id' => $serie->getId()]);
         }
 
         return $this->render('serie/edit.html.twig', [
@@ -112,9 +110,8 @@ class SerieController extends AbstractController
     }
 
     #[Route('/details/{id}', name: '_details', requirements: ['id' => '\d+'])]
-    public function details(int $id, SerieRepository $serieRepository): Response
+    public function details(Serie $serie): Response
     {
-        $serie = $serieRepository->find($id);
 
         return $this->render('serie/details.html.twig', [
             'serie' => $serie
@@ -122,11 +119,9 @@ class SerieController extends AbstractController
     }
 
     #[Route('/delete/{id}', name: '_delete', requirements: ['id' => '\d+'])]
-    public function delete(int $id, Request $request, SerieRepository $serieRepository, EntityManagerInterface $em): Response
+    public function delete(Serie $serie, Request $request, EntityManagerInterface $em): Response
     {
-        $serie = $serieRepository->find($id);
-
-        if ($this->isCsrfTokenValid('delete'.$id, $request->get('token'))) {
+        if ($this->isCsrfTokenValid('delete'.$serie->getId(), $request->get('token'))) {
             $em->remove($serie);
             $em->flush();
 
@@ -134,7 +129,6 @@ class SerieController extends AbstractController
         } else {
             $this->addFlash('danger', "Tu veux me gruger ??? Le jeton n'est pas valable");
         }
-
 
         return $this->redirectToRoute('app_serie_list');
     }
