@@ -121,5 +121,22 @@ class SerieController extends AbstractController
         ]);
     }
 
+    #[Route('/delete/{id}', name: '_delete', requirements: ['id' => '\d+'])]
+    public function delete(int $id, Request $request, SerieRepository $serieRepository, EntityManagerInterface $em): Response
+    {
+        $serie = $serieRepository->find($id);
+
+        if ($this->isCsrfTokenValid('delete'.$id, $request->get('token'))) {
+            $em->remove($serie);
+            $em->flush();
+
+            $this->addFlash('success', 'Une série a été supprimée');
+        } else {
+            $this->addFlash('danger', "Tu veux me gruger ??? Le jeton n'est pas valable");
+        }
+
+
+        return $this->redirectToRoute('app_serie_list');
+    }
 
 }
