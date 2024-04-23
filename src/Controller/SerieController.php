@@ -53,7 +53,7 @@ class SerieController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->has('delete_image') && $form->get('delete_image')->getData()) {
-                unlink('posters/series/' . $serie->getPoster());
+                $serie->deletePoster();
             }
 
             if ($form->get('poster_file')->getData() instanceof UploadedFile) {
@@ -61,10 +61,7 @@ class SerieController extends AbstractController
                 $name = strtolower($slugger->slug($serie->getName() . '-' . uniqid())) . '.' . $posterFile->guessExtension();
                 $posterFile->move('posters/series', $name);
 
-                if ($serie->getPoster() && file_exists('posters/series/' . $serie->getPoster())) {
-                    unlink('posters/series/' . $serie->getPoster());
-                }
-
+                $serie->deletePoster();
                 $serie->setPoster($name);
             }
 
