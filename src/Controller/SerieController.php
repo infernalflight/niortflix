@@ -91,7 +91,8 @@ class SerieController extends AbstractController
 
         $offset = ($page - 1) * 18;
 
-        $series = $serieRepository->findBy([], ['popularity' => 'DESC'], 18, $offset);
+        //$series = $serieRepository->findBy([], ['popularity' => 'DESC'], 18, $offset);
+        $series = $serieRepository->getSeriesWithSeasons(18, $offset);
         $nbSeries = $serieRepository->count();
 
         $maxPages = ceil($nbSeries / 18);

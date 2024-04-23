@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} :: Editer une saison{% endblock %}
+
+{% block body %}
+    <h2>Editer une saison</h2>
+    <div class="row justify-content-center">
+        <div class="col-12 col-xl-6">
+            {{ form(form) }}
+        </div>
+    </div>
+{% endblock %}

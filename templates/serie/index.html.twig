@@ -27,6 +27,9 @@
     <section>
         {% for serie in series %}
             <a href="{{ path('app_serie_details', {'id': serie.id}) }}"><img src="{{ asset('posters/series/' ~ serie.poster) }}" width="300px" loading="lazy" /></a>
+            {% for season in serie.seasons %}
+                {{ season.number }} |
+            {% endfor%}
         {% else %}
             Pas de série
         {% endfor %}
