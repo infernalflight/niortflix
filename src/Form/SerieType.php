@@ -2,7 +2,9 @@
 
 namespace App\Form;
 
+use App\Entity\Category;
 use App\Entity\Serie;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -39,7 +41,8 @@ class SerieType extends AbstractType
                     'Terminé' => 'Ended',
                     'Abandonné' => 'Canceled',
                 ],
-                'placeholder' => '-- Choisissez un statut --'
+                'placeholder' => '-- Choisissez un statut --',
+                'expanded' => true,
             ])
             ->add('vote')
             ->add('popularity')
@@ -78,6 +81,14 @@ class SerieType extends AbstractType
                     ]);
                 }
             })
+            ->add('categories', EntityType::class, [
+                'class' => Category::class,
+                'choice_label' => 'name',
+                'placeholder' => '-- Choisissez une catégorie --',
+                'required' => false,
+                'multiple' => true,
+                'expanded' => true,
+            ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Enregistrer',
                 'attr' => [

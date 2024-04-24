@@ -11,6 +11,9 @@
     </style>
 
     <h2>Detail de la série {{ serie.id }}</h2>
+    {% for category in serie.categories %}
+        <span class="badge bg-black">{{ category.name }}</span>
+    {% endfor %}
     <dl>
         <dt>Nom de la série:</dt>
         <dd>{{ serie.name }}</dd>
