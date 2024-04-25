@@ -12,12 +12,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/serie', name: 'app_serie')]
+#[IsGranted('ROLE_USER')]
 class SerieController extends AbstractController
 {
     #[Route('/create', name: '_create')]
+    #[IsGranted('ROLE_CONTRIB')]
     public function create(Request $request, EntityManagerInterface $em, SluggerInterface $slugger): Response
     {
         $serie = new Serie();
@@ -46,6 +50,7 @@ class SerieController extends AbstractController
     }
 
     #[Route('/update/{id}', name: '_update', requirements: ['id' => '\d+'])]
+    #[IsGranted('ROLE_CONTRIB')]
     public function update(Request $request, EntityManagerInterface $em, Serie $serie, SluggerInterface $slugger): Response
     {
         $form = $this->createForm(SerieType::class, $serie);
@@ -141,6 +146,7 @@ class SerieController extends AbstractController
     }
 
     #[Route('/delete/{id}', name: '_delete', requirements: ['id' => '\d+'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function delete(Serie $serie, Request $request, EntityManagerInterface $em): Response
     {
         if ($this->isCsrfTokenValid('delete'.$serie->getId(), $request->get('token'))) {
