@@ -1,42 +1,46 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Serie{% endblock %}</title>
-        <link rel="icon" href="{{ asset('img/icon.png') }}">
-        {% block stylesheets %}
-        {% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Serie{% endblock %}</title>
+    <link rel="icon" href="{{ asset('img/icon.png') }}">
+    {% block stylesheets %}
+    {% endblock %}
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
-        <h1><img src="{{ asset('img/logo.png') }}"></h1>
+    {% block javascripts %}
+        {% block importmap %}{{ importmap('app') }}{% endblock %}
+    {% endblock %}
+</head>
+<body>
+<h1><img src="{{ asset('img/logo.png') }}"></h1>
 
-        <nav>
-            <ul style="display:flex; flex-direction: row;list-style: none;">
-                <li style="padding: 5px;"><a href="{{ path('app_home') }}">Home</a></li>
-                <li style="padding: 5px;"><a href="{{ path('app_serie_list') }}">Series</a></li>
-                {% if is_granted('ROLE_CONTRIB') %}
-                    <li style="padding: 5px;"><a href="{{ path('app_serie_create') }}">Ajouter une série</a></li>
-                {% endif %}
-                <li style="padding: 5px;"><a href="{{ path('app_season_create') }}">Ajouter une saison</a></li>
-                {% if is_granted('IS_AUTHENTICATED') %}
-                  <li style="padding: 5px;"><a href="{{ path('app_logout') }}">Se déconnecter</a></li>
-                {% else %}
-                    <li style="padding: 5px;"><a href="{{ path('app_login') }}">Se connecter</a></li>
-                    <li style="padding: 5px;"><a href="{{ path('app_register') }}">Créer un compte</a></li>
-                {% endif %}
-            </ul>
-        </nav>
+<nav>
+    <ul style="display:flex; flex-direction: row;list-style: none;">
+        <li style="padding: 5px;"><a href="{{ path('app_home') }}">Home</a></li>
+        <li style="padding: 5px;"><a href="{{ path('app_serie_list') }}">Series</a></li>
+        {% if is_granted('ROLE_CONTRIB') %}
+            <li style="padding: 5px;"><a href="{{ path('app_serie_create') }}">Ajouter une série</a></li>
+        {% endif %}
+        <li style="padding: 5px;"><a href="{{ path('app_season_create') }}">Ajouter une saison</a></li>
+        {% if is_granted('IS_AUTHENTICATED') %}
+            <li style="padding: 5px;"><a href="{{ path('app_logout') }}">Se déconnecter</a></li>
+        {% else %}
+            <li style="padding: 5px;"><a href="{{ path('app_login') }}">Se connecter</a></li>
+            <li style="padding: 5px;"><a href="{{ path('app_register') }}">Créer un compte</a></li>
+        {% endif %}
+    </ul>
+</nav>
+{% if app.user is not empty %}
+    <div>
+        Vous êtes connecté en tant que {{ app.user.email }}
+    </div>
+{% endif %}
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="alert alert-{{ label }}"> {{ message }} </div>
+    {% endfor %}
+{% endfor %}
 
-        {% for label, messages in app.flashes %}
-            {% for message in messages %}
-                <div class="alert alert-{{ label }}"> {{ message }} </div>
-            {% endfor %}
-        {% endfor %}
-
-        {% block body %}{% endblock %}
-    </body>
+{% block body %}{% endblock %}
+</body>
 </html>
