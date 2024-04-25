@@ -1,0 +1,5 @@
+message.success.serie_created: 'A sery has been created'
+serie:
+  label:
+    name: 'Serie Name'
+    overview: 'Overview'
