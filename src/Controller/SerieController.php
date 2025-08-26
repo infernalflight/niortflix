@@ -6,6 +6,7 @@ use App\Entity\Serie;
 use App\Repository\SerieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -34,13 +35,30 @@ final class SerieController extends AbstractController
         return new Response('Une série a été créée en base');
     }
 
-    #[Route('/liste', name: '_liste')]
-    public function liste(SerieRepository $serieRepository): Response
+    #[Route('/liste/{page}', name: '_liste', requirements: ['page' => '\d+'], defaults: ['page' => 1])]
+    public function liste(SerieRepository $serieRepository, int $page, ParameterBagInterface $parameterBag): Response
     {
-        $series = $serieRepository->findAll();
+       // $series = $serieRepository->findAll();
+
+        $nbPerPage = $parameterBag->get('serie')['nb_par_page'];
+
+        $offset = ($page - 1) * $nbPerPage;
+
+        $series = $serieRepository->findBy(
+            //['status' => 'ended', 'genres' => 'Drama'],
+            [],
+            ['name' => 'ASC'],
+            $nbPerPage,
+            $offset
+        );
+
+        $nbSeries = $serieRepository->count([]);
+        $nbPages = ceil($nbSeries / $nbPerPage);
 
         return $this->render('serie/liste.html.twig', [
             'series' => $series,
+            'page' => $page,
+            'nb_pages' => $nbPages,
         ]);
     }
 }

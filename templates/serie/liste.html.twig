@@ -5,6 +5,15 @@
 {% block body %}
     <h2>Liste</h2>
 
+    <section>
+        {% if page > 1 %}
+            <a href="{{ path('serie_liste', {'page' : page - 1}) }}">Page précédente</a>&nbsp;
+        {% endif %}
+        {% if page < nb_pages %}
+            <a href="{{ path('serie_liste', {'page' : page + 1}) }}">Page suivante</a>
+        {% endif %}
+    </section>
+
     <ul>
     {% for serie in series %}
         <li>{{ serie.name }}: {{ serie.overview }} - {{ serie.firstAirDate|date('d/m/Y') }}</li>
