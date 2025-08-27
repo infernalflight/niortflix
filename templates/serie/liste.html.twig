@@ -14,9 +14,14 @@
         {% endif %}
     </section>
 
-    <ul>
+    <section class="series-list">
     {% for serie in series %}
-        <li>{{ serie.name }}: {{ serie.overview }} - {{ serie.firstAirDate|date('d/m/Y') }}</li>
+        <a href="">
+            <img src="{{ asset('uploads/posters/series/' ~ serie.poster) }}" width="250px" alt="Poster de {{ serie.name }}" loading="lazy">
+        </a>
+    {% else %}
+        <p>Pas de série !</p>
     {% endfor %}
-    </ul>
+    </section>
+
 {% endblock %}

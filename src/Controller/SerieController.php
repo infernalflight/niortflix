@@ -16,7 +16,6 @@ final class SerieController extends AbstractController
     #[Route('/serie-test', name: 'app_serie')]
     public function index(EntityManagerInterface $em): Response
     {
-
         $serie = new Serie();
         $serie->setName('La casa de papel')
             ->setOverview('Beaucoup de fil à retordre pour el Professor ...')
@@ -25,7 +24,7 @@ final class SerieController extends AbstractController
             ->setPopularity(899.2)
             ->setFirstAirDate(new \DateTime('2017-05-02'))
             ->setLastAirDate(new \DateTime('2021-12-03'))
-            ->setDateCreated(new \DateTime())
+ //           ->setDateCreated(new \DateTime())
         ;
 
         $em->persist($serie);
