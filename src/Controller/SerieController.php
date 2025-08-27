@@ -60,4 +60,18 @@ final class SerieController extends AbstractController
             'nb_pages' => $nbPages,
         ]);
     }
+
+    #[Route('/detail/{id}', name: '_detail', requirements: ['id' => '\d+'])]
+    public function detail(int $id, SerieRepository $serieRepository): Response
+    {
+        $serie = $serieRepository->find($id);
+
+        if (!$serie) {
+            throw $this->createNotFoundException('La série n\'existe pas');
+        }
+
+        return $this->render('serie/detail.html.twig', [
+            'serie' => $serie,
+        ]);
+    }
 }
