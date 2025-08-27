@@ -42,7 +42,7 @@ final class SerieController extends AbstractController
         $nbPerPage = $parameterBag->get('serie')['nb_par_page'];
 
         $offset = ($page - 1) * $nbPerPage;
-
+/**
         $series = $serieRepository->findBy(
             //['status' => 'ended', 'genres' => 'Drama'],
             [],
@@ -50,9 +50,19 @@ final class SerieController extends AbstractController
             $nbPerPage,
             $offset
         );
+**/
 
-        $nbSeries = $serieRepository->count([]);
-        $nbPages = ceil($nbSeries / $nbPerPage);
+        // Avec QueryBuilder
+        $series = $serieRepository->findSeriesWithQueryBuilder($offset, $nbPerPage, "Drama");
+        $nbSeries = $serieRepository->findSeriesWithQueryBuilder($offset, $nbPerPage, "Drama", true);
+
+        // Avec DQL
+        //$series = $serieRepository->findSeriesWithDQL($offset, $nbPerPage, 'Drama');
+
+        // Avec Raw SQL
+       // dd($serieRepository->getSeriesWithRawSQL($offset, $nbPerPage));
+
+        $nbPages = ceil($nbSeries[1] / $nbPerPage);
 
         return $this->render('serie/liste.html.twig', [
             'series' => $series,
