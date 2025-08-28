@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/serie', name: 'serie')]
@@ -74,13 +75,8 @@ final class SerieController extends AbstractController
     }
 
     #[Route('/detail/{id}', name: '_detail', requirements: ['id' => '\d+'])]
-    public function detail(int $id, SerieRepository $serieRepository): Response
+    public function detail(Serie $serie): Response
     {
-        $serie = $serieRepository->find($id);
-
-        if (!$serie) {
-            throw $this->createNotFoundException('La série n\'existe pas');
-        }
 
         return $this->render('serie/detail.html.twig', [
             'serie' => $serie,
@@ -94,11 +90,30 @@ final class SerieController extends AbstractController
         $serieForm = $this->createForm(SerieType::class, $serie);
         $serieForm->handleRequest($request);
 
-        if ($serieForm->isSubmitted()) {
+        if ($serieForm->isSubmitted() && $serieForm->isValid()) {
             $em->persist($serie);
             $em->flush();
 
             $this->addFlash('success', 'Une série a été crée en base');
+
+            return $this->redirectToRoute('serie_detail', ['id' => $serie->getId()]);
+        }
+
+        return $this->render('serie/edit.html.twig', [
+            'serie_form' => $serieForm,
+        ]);
+    }
+
+    #[Route('/update/{id}', name: '_update', requirements: ['id' => '\d+'])]
+    public function update(Request $request, EntityManagerInterface $em, Serie $serie): Response
+    {
+        $serieForm = $this->createForm(SerieType::class, $serie);
+        $serieForm->handleRequest($request);
+
+        if ($serieForm->isSubmitted() && $serieForm->isValid()) {
+            $em->flush();
+
+            $this->addFlash('success', 'Une série a été maj en base');
 
             return $this->redirectToRoute('serie_detail', ['id' => $serie->getId()]);
         }
