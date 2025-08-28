@@ -6,6 +6,8 @@
 parameters:
     serie:
         nb_par_page: 15
+        backdrop_dir: 'uploads/backdrops'
+        poster_dir: 'uploads/posters/series'
 services:
     # default configuration for services in *this* file
     _defaults:

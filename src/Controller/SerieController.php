@@ -67,7 +67,7 @@ final class SerieController extends AbstractController
     }
 
     #[Route('/create', name: '_create')]
-    public function create(Request $request, EntityManagerInterface $em, FileManager $fileManager): Response
+    public function create(Request $request, EntityManagerInterface $em, FileManager $fileManager, ParameterBagInterface $parameterBag): Response
     {
         $serie = new Serie();
         $serieForm = $this->createForm(SerieType::class, $serie);
@@ -76,7 +76,7 @@ final class SerieController extends AbstractController
         if ($serieForm->isSubmitted() && $serieForm->isValid()) {
             $file = $serieForm->get('backdrop_file')->getData();
             if ($file instanceof UploadedFile) {
-                if ($name = $fileManager->upload($file, 'uploads/backdrops', $serie->getName())) {
+                if ($name = $fileManager->upload($file, $parameter->get('serie')['backdrops_dir'], $serie->getName())) {
                     $serie->setBackdrop($name);
                 }
             }
@@ -95,7 +95,7 @@ final class SerieController extends AbstractController
     }
 
     #[Route('/update/{id}', name: '_update', requirements: ['id' => '\d+'])]
-    public function update(Request $request, EntityManagerInterface $em, Serie $serie, FileManager $fileManager): Response
+    public function update(Request $request, EntityManagerInterface $em, Serie $serie, FileManager $fileManager, ParameterBagInterface $parameterBag): Response
     {
         $serieForm = $this->createForm(SerieType::class, $serie);
         $serieForm->handleRequest($request);
@@ -103,7 +103,7 @@ final class SerieController extends AbstractController
         if ($serieForm->isSubmitted() && $serieForm->isValid()) {
             $file = $serieForm->get('backdrop_file')->getData();
             if ($file instanceof UploadedFile) {
-                if ($name = $fileManager->upload($file, 'uploads/backdrops', $serie->getName(), $serie->getBackdrop())) {
+                if ($name = $fileManager->upload($file, $parameterBag->get('serie')['backdrops_dir'], $serie->getName(), $serie->getBackdrop())) {
                     $serie->setBackdrop($name);
                 }
             }
