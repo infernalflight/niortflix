@@ -5,13 +5,16 @@ namespace App\Controller;
 use App\Entity\Serie;
 use App\Form\SerieType;
 use App\Repository\SerieRepository;
+use App\Utils\FileManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 #[Route('/serie', name: 'serie')]
 final class SerieController extends AbstractController
@@ -64,13 +67,20 @@ final class SerieController extends AbstractController
     }
 
     #[Route('/create', name: '_create')]
-    public function create(Request $request, EntityManagerInterface $em): Response
+    public function create(Request $request, EntityManagerInterface $em, FileManager $fileManager): Response
     {
         $serie = new Serie();
         $serieForm = $this->createForm(SerieType::class, $serie);
         $serieForm->handleRequest($request);
 
         if ($serieForm->isSubmitted() && $serieForm->isValid()) {
+            $file = $serieForm->get('backdrop_file')->getData();
+            if ($file instanceof UploadedFile) {
+                if ($name = $fileManager->upload($file, 'uploads/backdrops', $serie->getName())) {
+                    $serie->setBackdrop($name);
+                }
+            }
+
             $em->persist($serie);
             $em->flush();
 
@@ -85,14 +95,20 @@ final class SerieController extends AbstractController
     }
 
     #[Route('/update/{id}', name: '_update', requirements: ['id' => '\d+'])]
-    public function update(Request $request, EntityManagerInterface $em, Serie $serie): Response
+    public function update(Request $request, EntityManagerInterface $em, Serie $serie, FileManager $fileManager): Response
     {
         $serieForm = $this->createForm(SerieType::class, $serie);
         $serieForm->handleRequest($request);
 
         if ($serieForm->isSubmitted() && $serieForm->isValid()) {
-            $em->flush();
+            $file = $serieForm->get('backdrop_file')->getData();
+            if ($file instanceof UploadedFile) {
+                if ($name = $fileManager->upload($file, 'uploads/backdrops', $serie->getName(), $serie->getBackdrop())) {
+                    $serie->setBackdrop($name);
+                }
+            }
 
+            $em->flush();
             $this->addFlash('success', 'Une série a été maj en base');
 
             return $this->redirectToRoute('serie_detail', ['id' => $serie->getId()]);
