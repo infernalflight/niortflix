@@ -5,7 +5,7 @@
 {% block body %}
     <style>
         body {
-            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.9)),
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.9)),
             url("{{ asset('uploads/backdrops/' ~ serie.backdrop) }}");
         }
     </style>
@@ -17,5 +17,13 @@
     <span class="badge bg-info">{{ serie.firstAirDate|date('d/m/Y') }}</span>
 
     <p>{{ serie.overview }}</p>
+
+    <div>
+        <a href="{{ path('serie_update', {id: serie.id}) }}" class="btn btn-primary"
+           title="Modifier la série">Modifier</a>
+        &nbsp;
+        <a href="{{ path('serie_delete', {id: serie.id, token: csrf_token('delete'~serie.id)}) }}"
+           class="btn btn-danger" title="Supprimer la série" onclick="return confirm('Etes vous sûr ??')">Supprimer</a>
+    </div>
 
 {% endblock %}
