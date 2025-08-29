@@ -82,7 +82,15 @@ SQL;
             ->fetchAllAssociative();
     }
 
-
+    public function findSeriesOldest(int $nbAnnees): array
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.firstAirDate <= :date')
+            ->setParameter('date', new \DateTime("-$nbAnnees years"))
+            ->orderBy('s.firstAirDate', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 
 
     //    /**

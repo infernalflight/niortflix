@@ -9,7 +9,6 @@ class FileManager
 {
     public function __construct(private SluggerInterface $slugger) {}
 
-
     public function upload(UploadedFile $file, string $dir, string $name, string $oldResourceToDelete = ''): string
     {
         $name = $this->slugger->slug($name) . '-' . uniqid() . '.' . $file->guessExtension();
@@ -29,5 +28,4 @@ class FileManager
 
         return false;
     }
-
 }
