@@ -22,8 +22,8 @@ class FileManager
 
     public function delete(string $dir, string $name): bool
     {
-        if (\file_exists($dir . '/' . $name)) {
-            unlink($dir . '/' . $name);
+        if (\file_exists('public/' . $dir . '/' . $name)) {
+            unlink('public/' . $dir . '/' . $name);
             return true;
         }
 
