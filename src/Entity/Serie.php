@@ -2,16 +2,36 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
 use App\Repository\SerieRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SerieRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\UniqueConstraint(columns: ['name', 'first_air_date'])]
 #[UniqueEntity(fields: ['name', 'firstAirDate'], message: 'Cette série existe déja')]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            uriTemplate: '/all_series',
+            paginationItemsPerPage: 5,
+            normalizationContext: ['groups' => 'serie:list']
+        ),
+        new Get(),
+        new Post(),
+    ]
+)]
+#[ApiFilter(SearchFilter::class, properties: ['name' => 'partial'])]
 class Serie
 {
     #[ORM\Id]
@@ -25,13 +45,16 @@ class Serie
         minMessage: 'Un nom doit comporter au moins {{ limit }} caractères',
         maxMessage: 'Un nom doit pas dépasser {{ limit }} caractères'
     )]
+    #[Groups(['serie:list'])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['serie:list'])]
     private ?string $overview = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\Choice(choices: ['returning', 'ended', 'canceled'], message: 'Ce choix n\'est pas valide')]
+    #[Groups(['serie:list'])]
     private ?string $status = null;
 
     #[ORM\Column(nullable: true)]
