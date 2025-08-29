@@ -76,7 +76,7 @@ final class SerieController extends AbstractController
         if ($serieForm->isSubmitted() && $serieForm->isValid()) {
             $file = $serieForm->get('backdrop_file')->getData();
             if ($file instanceof UploadedFile) {
-                if ($name = $fileManager->upload($file, $parameter->get('serie')['backdrops_dir'], $serie->getName())) {
+                if ($name = $fileManager->upload($file, $parameterBag->get('serie')['backdrop_dir'], $serie->getName())) {
                     $serie->setBackdrop($name);
                 }
             }
@@ -103,7 +103,7 @@ final class SerieController extends AbstractController
         if ($serieForm->isSubmitted() && $serieForm->isValid()) {
             $file = $serieForm->get('backdrop_file')->getData();
             if ($file instanceof UploadedFile) {
-                if ($name = $fileManager->upload($file, $parameterBag->get('serie')['backdrops_dir'], $serie->getName(), $serie->getBackdrop())) {
+                if ($name = $fileManager->upload($file, $parameterBag->get('serie')['backdrop_dir'], $serie->getName(), $serie->getBackdrop())) {
                     $serie->setBackdrop($name);
                 }
             }
